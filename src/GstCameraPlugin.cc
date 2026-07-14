@@ -427,6 +427,9 @@ void GstCameraPlugin::Impl::CreateGenericPipeline(GstElement *pipeline)
         return;
     }
 
+    // Repeat SPS / PPS with every IDR frame so late RTP receivers can decode.
+    g_object_set(G_OBJECT(payloader), "config-interval", -1, nullptr);
+
     // Connect all elements to pipeline
     gst_bin_add_many(GST_BIN(pipeline), source, queue, converter, encoder,
         h264_parser, payloader, sink, nullptr);
