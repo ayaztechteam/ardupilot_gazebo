@@ -427,10 +427,6 @@ void GstCameraPlugin::Impl::CreateGenericPipeline(GstElement *pipeline)
         return;
     }
 
-    // Keep each IDR independently decodable for receivers joining mid-stream.
-    g_object_set(G_OBJECT(h264_parser), "config-interval", -1, nullptr);
-    g_object_set(G_OBJECT(payloader), "config-interval", -1, nullptr);
-
     // Connect all elements to pipeline
     gst_bin_add_many(GST_BIN(pipeline), source, queue, converter, encoder,
         h264_parser, payloader, sink, nullptr);
@@ -491,7 +487,7 @@ GstElement* GstCameraPlugin::Impl::CreateEncoder()
         gzdbg << "Using Cuda" << std::endl;
         encoder = gst_element_factory_make("nvh264enc", nullptr);
         g_object_set(G_OBJECT(encoder), "bitrate", 800, "preset", 5,
-            "gop-size", 10, "zerolatency", true, nullptr);
+            "gop-size", 10, nullptr);
     }
     else
     {
